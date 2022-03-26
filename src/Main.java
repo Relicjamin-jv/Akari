@@ -89,10 +89,11 @@ public class Main {
             sentInCandidate.add(candidates.get(k));  //reset the data
         }
         for(int i = 0; i < candidates.size(); i++) {
-            Board solved = solver.backTrackSolve(board, sentInCandidate, i);
-            if (solved != null) {
-                solved.printBoard();
+            //System.out.println(BoardSolver.solvedn);
+            if (BoardSolver.solvedn) {
+                break;
             }
+            Board solved = solver.backTrackSolve(board, sentInCandidate, i);
             for(int k = 0; k < candidates.size(); k++){
                 sentInCandidate.add(candidates.get(k));  //reset the data
             }

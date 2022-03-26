@@ -13,7 +13,7 @@
 import java.util.ArrayList;
 
 public class BoardSolver {
-
+    static public boolean solvedn = false;
     public Board.Cell[][] board;
     public int sizeOfBoard;
     public Board b;
@@ -61,7 +61,7 @@ public class BoardSolver {
                         numNeighbor++;
                     } catch (Exception e) {
                     }
-                    System.out.println(i + "," + j + "," + numNeighbor + "," + numOfbulbs);
+                    //System.out.println(i + "," + j + "," + numNeighbor + "," + numOfbulbs);
                     if(numNeighbor == numOfbulbs ){
                         placeLightTrivial(i, j);
                     }
@@ -82,7 +82,7 @@ public class BoardSolver {
 //            b.lightUpTiles(i + 1, j);
             b.placeBulb(i+1, j);
         } catch (Exception e) {
-            System.out.println("Cell below does not exists (Place light)");
+            //System.out.println("Cell below does not exists (Place light)");
         }
         //set the below cell to implacable
         try {
@@ -90,7 +90,7 @@ public class BoardSolver {
 //            b.lightUpTiles(i - 1, j);
             b.placeBulb(i-1, j);
         } catch (Exception e) {
-            System.out.println("Cell above does not exists (Place light)");
+            //System.out.println("Cell above does not exists (Place light)");
         }
         //check left
         try {
@@ -98,7 +98,7 @@ public class BoardSolver {
 //            b.lightUpTiles(i, j - 1);
             b.placeBulb(i, j - 1);
         } catch (Exception e) {
-            System.out.println("Cell to the left does not exists (Place light)");
+            //System.out.println("Cell to the left does not exists (Place light)");
         }
         //check right
         try {
@@ -106,7 +106,7 @@ public class BoardSolver {
 //            b.lightUpTiles(i, j + 1);
             b.placeBulb(i, j + 1);
         } catch (Exception e) {
-            System.out.println("Cell to the right does not exists (Place Light)");
+            //System.out.println("Cell to the right does not exists (Place Light)");
         }
     }
 
@@ -144,20 +144,24 @@ public class BoardSolver {
     }*/
 
     Board backTrackSolve(Board b, ArrayList<Board.Cell> candidates, int i){
-        b.printBoard();
+        //b.printBoard();
         System.out.println();
         if(b.checkSolved()){
             //return board
             System.out.println("-----SOLVED------");
             b.printBoard();
-            return b;
+            solvedn = true;
+            return null;
+        }
+        if(solvedn){ //no need to find another solution if there is one
+            return null;
         }
         if(i >= candidates.size() || checkBoardWalls(b.board)) {
             //b.printBoard();
             if(candidates.isEmpty()){
-                System.out.println("Ran out of candidates");
+                //System.out.println("Ran out of candidates");
             }else{
-                System.out.println("Cant Satisfy due to constraints");
+                //System.out.println("Cant Satisfy due to constraints");
             }
             return null;
         }

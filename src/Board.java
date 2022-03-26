@@ -54,7 +54,7 @@ public class Board {
             board[i][j].setBulb(true);
             lightUpTiles(i, j);
         }else{
-            System.out.println("FAILED");
+//            System.out.println("FAILED");
         }
     }
 
@@ -123,7 +123,7 @@ public class Board {
                 walls.add(board[i-1][j]);
             }
         }catch (Exception e){
-            System.out.println("See if there is a neighbor above did not work");
+//            System.out.println("See if there is a neighbor above did not work");
         }
         //looking below
         try{
@@ -131,7 +131,7 @@ public class Board {
                 walls.add(board[i+1][j]);
             }
         }catch (Exception e){
-            System.out.println("See if there is a neighbor below did not work");
+//            System.out.println("See if there is a neighbor below did not work");
         }
 
         //looking left
@@ -140,7 +140,7 @@ public class Board {
                 walls.add(board[i][j-1]);
             }
         }catch (Exception e){
-            System.out.println("See if there is a neighbor left did not work");
+//            System.out.println("See if there is a neighbor left did not work");
         }
 
         //looking right
@@ -149,7 +149,7 @@ public class Board {
                 walls.add(board[i][j+1]);
             }
         }catch (Exception e){
-            System.out.println("See if there is a neighbor right did not work");
+//            System.out.println("See if there is a neighbor right did not work");
         }
 
 
@@ -163,7 +163,7 @@ public class Board {
                 if(walls.get(iter).getBulbsAroundWall() > count){ //check if you can still place
                     wallsSat++;
                 }else{
-                    System.out.println("Cant place bulb here because of wall: " + walls.get(iter).getRow() + ", " + walls.get(iter).getCol());
+//                    System.out.println("Cant place bulb here because of wall: " + walls.get(iter).getRow() + ", " + walls.get(iter).getCol());
                     return false;
                 }
             }
@@ -307,6 +307,40 @@ public class Board {
                 }
             }
         }
+        //need to check that every wall has it constraints meet
+        for(int i = 0; i < size; i++){
+            for(int j =0; j < size; j++){
+                if(board[i][j].getWall() && board[i][j].getBulbsAroundWall() != -1){
+                    int numberExpected = board[i][j].getBulbsAroundWall();
+                    int number = 0;
+                    //check all its neighbors and and see if there are enough lb
+                    try{
+                        if(board[i+1][j].getBulb()){
+                            number++;
+                        }
+                    }catch (Exception e){}
+                    try{
+                        if(board[i-1][j].getBulb()){
+                            number++;
+                        }
+                    }catch (Exception e){}
+                    try{
+                        if(board[i][j+1].getBulb()){
+                            number++;
+                        }
+                    }catch (Exception e){}
+                    try{
+                        if(board[i][j-1].getBulb()){
+                            number++;
+                        }
+                    }catch (Exception e){}
+                   // System.out.println(number + "," + numberExpected +" Row: " + i + " " + "Col " + j);
+                    if(number != numberExpected){
+                        return false;
+                    }
+                }
+            }
+        }
         return true;
     }
 
@@ -376,7 +410,7 @@ public class Board {
 
         boolean checkCell(){
             if (wall || lit) {
-                System.out.println("Cant place a bulb here: (" + row + ", " + col + ")");
+//                System.out.println("Cant place a bulb here: (" + row + ", " + col + ")");
                 return false;
             }
             return true;
