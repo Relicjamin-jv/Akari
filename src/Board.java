@@ -13,6 +13,16 @@ public class Board {
         initCells();
     }
 
+    Board(Board b){
+        this.size = b.size;
+        this.board = b.board;
+        initCells();
+    }
+
+    Cell getCell(int i, int j){
+        return board[i][j];
+    }
+
     /**
      * init the cells into mem.
      */
@@ -43,6 +53,58 @@ public class Board {
         if (canPlace) {
             board[i][j].setBulb(true);
             lightUpTiles(i, j);
+        }else{
+            System.out.println("FAILED");
+        }
+    }
+
+    public void delightTiles(int i, int j) {
+        //up
+        for (int z = i; z >= 0; z--) {
+            if (board[z][j].getWall()) {
+                break;
+            }
+            board[z][j].setLit(false);
+        }
+
+        //down
+        for (int z = i; z < size; z++) {
+            if (board[z][j].getWall()) {
+                break;
+            }
+            board[z][j].setLit(false);
+        }
+
+        //right
+        for (int z = j; z < size; z++) {
+            if (board[i][z].getWall()) {
+                break;
+            }
+            board[i][z].setLit(false);
+        }
+
+        //left
+        for (int z = j; z >= 0; z--) {
+            if (board[i][z].getWall()) {
+                break;
+            }
+            board[i][z].setLit(false);
+        }
+    }
+
+    void removeBulb(int i, int j){
+        board[i][j].setBulb(false);
+
+        //remove the l tiles
+        delightTiles(i, j);
+
+        //now need to up date all other Bulb tiles
+        for(int row = 0; row <size; row++){
+            for(int col = 0; col < size; col++){
+                if(board[row][col].getBulb()){
+                    lightUpTiles(row, col);
+                }
+            }
         }
     }
 
@@ -53,141 +115,114 @@ public class Board {
      */
     private boolean checkNeighbors(int i, int j) {
         ArrayList<Cell> walls = new ArrayList<>();
+        int wallsSat = 0;
+        //checking curr position to see if there are any wall around me
+        //looking above
+        try{
+            if(board[i-1][j].getWall()){
+                walls.add(board[i-1][j]);
+            }
+        }catch (Exception e){
+            System.out.println("See if there is a neighbor above did not work");
+        }
+        //looking below
+        try{
+            if(board[i+1][j].getWall()){
+                walls.add(board[i+1][j]);
+            }
+        }catch (Exception e){
+            System.out.println("See if there is a neighbor below did not work");
+        }
 
-        if(i > 0 && i < 6 && j > 0 && j < 6) {
-            //check above
-            if (board[i - 1][j].getWall()) {
-                walls.add(board[i - 1][j]);
+        //looking left
+        try{
+            if(board[i][j-1].getWall()){
+                walls.add(board[i][j-1]);
             }
-            //check below
-            if (board[i + 1][j].getWall()) {
-                walls.add(board[i + 1][j]);
+        }catch (Exception e){
+            System.out.println("See if there is a neighbor left did not work");
+        }
+
+        //looking right
+        try{
+            if(board[i][j+1].getWall()){
+                walls.add(board[i][j+1]);
             }
-            //check left
-            if (board[i][j - 1].getWall()) {
-                walls.add(board[i - 1][j]);
-            }
-            //check right
-            if (board[i][j + 1].getWall()) {
-                walls.add(board[i + 1][j]);
-            }
-        }else{ //edge cases
-            //if we're at the top left corner
-            if(i == 0 && j == 0){
-                //check below
-                if (board[i + 1][j].getWall()) {
-                    walls.add(board[i + 1][j]);
-                }
-                //check right
-                if (board[i][j + 1].getWall()) {
-                    walls.add(board[i + 1][j]);
-                }
-            }else if(i == 6 && j == 0){ //we're at the bottom left corner
-                //check above
-                if (board[i - 1][j].getWall()) {
-                    walls.add(board[i - 1][j]);
-                }
-                //check right
-                if (board[i][j + 1].getWall()) {
-                    walls.add(board[i][j + 1]);
-                }
-            }else if(i == 0 && j == 6){ //at the top right corner
-                //check below
-                if (board[i + 1][j].getWall()) {
-                    walls.add(board[i + 1][j]);
-                }
-                //check left
-                if (board[i][j - 1].getWall()) {
-                    walls.add(board[i][j - 1]);
-                }
-            }else if(i == 6 && j == 6){//bottom right corner
-                //check above
-                if (board[i - 1][j].getWall()) {
-                    walls.add(board[i - 1][j]);
-                }
-                //check left
-                if (board[i][j - 1].getWall()) {
-                    walls.add(board[i][j - 1]);
-                }
-            }else if(i == 0){ //were at the top most corner
-                //check below
-                if (board[i + 1][j].getWall()) {
-                    walls.add(board[i + 1][j]);
-                }
-                //check left
-                if (board[i][j - 1].getWall()) {
-                    walls.add(board[i][j - 1]);
-                }
-                //check right
-                if (board[i][j + 1].getWall()) {
-                    walls.add(board[i][j + 1]);
-                }
-            }else if(i == 6){ //were at the right most corner
-                //check above
-                if (board[i - 1][j].getWall()) {
-                    walls.add(board[i - 1][j]);
-                }
-                //check left
-                if (board[i][j - 1].getWall()) {
-                    walls.add(board[i][j - 1]);
-                }
-                //check right
-                if (board[i][j + 1].getWall()) {
-                    walls.add(board[i][j + 1]);
-                }
-            }else if(j == 0){ //were at left most corner
-                //check above
-                if (board[i - 1][j].getWall()) {
-                    walls.add(board[i - 1][j]);
-                }
-                //check below
-                if (board[i + 1][j].getWall()) {
-                    walls.add(board[i + 1][j]);
-                }
-                //check right
-                if (board[i][j + 1].getWall()) {
-                    walls.add(board[i][j + 1]);
-                }
-            }else if(j == 6){ //at the most right most corner
-                //check above
-                if (board[i - 1][j].getWall()) {
-                    walls.add(board[i - 1][j]);
-                }
-                //check below
-                if (board[i + 1][j].getWall()) {
-                    walls.add(board[i + 1][j]);
-                }
-                //check left
-                if (board[i][j - 1].getWall()) {
-                    walls.add(board[i][j - 1]);
-                }
+        }catch (Exception e){
+            System.out.println("See if there is a neighbor right did not work");
+        }
+
+
+        for(int iter = 0; iter < walls.size(); iter++){
+            if(walls.get(iter).getBulbsAroundWall() == -1){ //dosent matter how many bulbs are around
+                wallsSat++;
+                continue;
             }else{
-                System.out.print("WE SHOULD NEVER GET HERE");
+                //have the wall calculate how many bulbs it has around it
+                int count = countNeighborBulb(walls.get(iter).getRow(), walls.get(iter).getCol());
+                if(walls.get(iter).getBulbsAroundWall() > count){ //check if you can still place
+                    wallsSat++;
+                }else{
+                    System.out.println("Cant place bulb here because of wall: " + walls.get(iter).getRow() + ", " + walls.get(iter).getCol());
+                    return false;
+                }
             }
         }
 
-
-        //checking if the bulb is allowed to be there
-        for (int b = 0; b < walls.size(); b++) {
-            Cell curr = walls.get(b);
-            if (curr.bulbs <= 0) {
-                System.out.println("Cant place a bulb here due to wall constriction");
-                return false;
-            }
+        if(wallsSat == walls.size()){ //all walls are satisfied
+            return true;
         }
-
-        //if so decrement all the walls bulbs count
-        for (int b = 0; b < walls.size(); b++) {
-            Cell curr = walls.get(b);
-            curr.bulbs--;
-        }
-
-        return true;
+        return  false;
     }
 
-    private void lightUpTiles(int i, int j) {
+    public int countNeighborBulb(int i, int j){
+        int count = 0;
+        try{
+            if(board[i - 1][j].getBulb()){
+                count++;
+            }
+        }catch (Exception e){
+
+        }
+        try{
+            if(board[i + 1][j].getBulb()){
+                count++;
+            }
+        }catch (Exception e){
+
+        }
+        try{
+            if(board[i][j + 1].getBulb()){
+                count++;
+            }
+        }catch (Exception e){
+
+        }
+        try{
+            if(board[i][j - 1].getBulb()){
+                count++;
+            }
+        }catch (Exception e){
+
+        }
+
+        return count;
+    }
+
+    public void reset(){
+        for(int i = 0; i < size; i++){
+            for(int j = 0; j < size; j++){
+                if(!board[i][j].getWall()){
+                    board[i][j].setBulb(false);
+                    board[i][j].setLit(false);
+                }
+            }
+        }
+    }
+
+    public void lightUpTiles(int i, int j) {
         //up
-        for (int z = i; z >= 0; z--) {
+        for (int z = i - 1; z >= 0; z--) {
             if (board[z][j].getWall()) {
                 break;
             }
@@ -195,7 +230,7 @@ public class Board {
         }
 
         //down
-        for (int z = i; z < size; z++) {
+        for (int z = i + 1; z < size; z++) {
             if (board[z][j].getWall()) {
                 break;
             }
@@ -203,7 +238,7 @@ public class Board {
         }
 
         //right
-        for (int z = j; z < size; z++) {
+        for (int z = j + 1; z < size; z++) {
             if (board[i][z].getWall()) {
                 break;
             }
@@ -211,7 +246,7 @@ public class Board {
         }
 
         //left
-        for (int z = j; z >= 0; z--) {
+        for (int z = j - 1; z >= 0; z--) {
             if (board[i][z].getWall()) {
                 break;
             }
@@ -265,7 +300,7 @@ public class Board {
     boolean checkSolved() {
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                if (board[i][j].getWall() || board[i][j].getLit()) {
+                if (board[i][j].getWall() || board[i][j].getLit() || board[i][j].getBulb()) {
                     continue;
                 } else {
                     return false;
@@ -283,7 +318,7 @@ public class Board {
         private int bulbsAroundWall = 0;
         private int row;
         private int col;
-        private int bulbs = 0;
+        public int bulbs;
 
         Cell(boolean wall, boolean lightBulb, boolean lit) {
             this.wall = wall;
@@ -293,6 +328,22 @@ public class Board {
 
         Cell(int row, int col) {
             this.row = row;
+            this.col = col;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public void setRow(int row) {
+            this.row = row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public void setCol(int col) {
             this.col = col;
         }
 
