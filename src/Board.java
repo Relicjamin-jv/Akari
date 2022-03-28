@@ -45,7 +45,7 @@ public class Board {
         position.setWall(true);
     }
 
-    void placeBulb(int i, int j) {
+    boolean placeBulb(int i, int j) {
         //place the bulb
         boolean canPlace = board[i][j].checkCell() && checkNeighbors(i, j);;
 
@@ -53,9 +53,11 @@ public class Board {
         if (canPlace) {
             board[i][j].setBulb(true);
             lightUpTiles(i, j);
+            return true;
         }else{
 //            System.out.println("FAILED");
         }
+        return false;
     }
 
     public void delightTiles(int i, int j) {
@@ -353,6 +355,7 @@ public class Board {
         private int row;
         private int col;
         public int bulbs;
+        public int h = 0;
 
         Cell(boolean wall, boolean lightBulb, boolean lit) {
             this.wall = wall;

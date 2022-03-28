@@ -77,31 +77,32 @@ public class Main {
         //1. get the lightbulb candidates
         solver.preprocessor();
         ArrayList<Board.Cell> candidates = new ArrayList<>();
-        for(int i = 0; i < board.size; i++){
-            for(int j = 0; j < board.size; j++){
-                if(!board.getCell(i, j).getWall()){
+        for (int i = 0; i < board.size; i++) {
+            for (int j = 0; j < board.size; j++) {
+                if (!board.getCell(i, j).getWall() && !board.getCell(i, j).getBulb()) {
                     candidates.add(board.getCell(i, j)); //add the cell to i, j
                 }
             }
         }
+        candidates = hueristicSort(candidates, board);
         ArrayList<Board.Cell> sentInCandidate = new ArrayList<>();
-        for(int k = 0; k < candidates.size(); k++){
+        for (int k = 0; k < candidates.size(); k++) {
             sentInCandidate.add(candidates.get(k));  //reset the data
         }
-        for(int i = 0; i < candidates.size(); i++) {
+        for (int i = 0; i < candidates.size(); i++) {
             //System.out.println(BoardSolver.solvedn);
             if (BoardSolver.solvedn) {
                 break;
             }
             Board solved = solver.backTrackSolve(board, sentInCandidate, i);
-            for(int k = 0; k < candidates.size(); k++){
+            for (int k = 0; k < candidates.size(); k++) {
                 sentInCandidate.add(candidates.get(k));  //reset the data
             }
             board.reset();
             solver.preprocessor(); //reset the preprocessed data
         }
 
-       // testing
+        // testing
 
 //        board.placeBulb(0, 0);
 //        board.placeBulb(3, 1);
@@ -119,6 +120,114 @@ public class Main {
         input.close();
     }
 
+    private static ArrayList<Board.Cell> hueristicSort(ArrayList<Board.Cell> candidates, Board board) {
+        ArrayList<Board.Cell> cellSorted = new ArrayList<>();
+        ArrayList<Board.Cell> cellSorted0 = new ArrayList<>();
+        ArrayList<Board.Cell> cellSorted1 = new ArrayList<>();
+        ArrayList<Board.Cell> cellSorted2 = new ArrayList<>();
+        ArrayList<Board.Cell> cellSorted3 = new ArrayList<>();
+        for (int i = 0; i < candidates.size(); i++) {
+            int row = candidates.get(i).getRow();
+            int col = candidates.get(i).getCol();
+            try {
+                if (board.getCell(row - 1, col).getWall()) {
+                    if (board.getCell(row - 1, col).getBulbsAroundWall() == 3) {
+                        cellSorted3.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 3;
+                        continue;
+                    }
+                    if (board.getCell(row - 1, col).getBulbsAroundWall() == 2) {
+                        cellSorted2.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 2;
+                        continue;
+                    }
+                    if (board.getCell(row - 1, col).getBulbsAroundWall() == 1) {
+                        cellSorted1.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 1;
+                        continue;
+                    }
+                }
+
+            } catch (Exception e) {
+            }
+            try {
+                if (board.getCell(row + 1, col).getWall()) {
+                    if (board.getCell(row + 1, col).getBulbsAroundWall() == 3) {
+                        cellSorted3.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 3;
+                        continue;
+                    }
+                    if (board.getCell(row + 1, col).getBulbsAroundWall() == 2) {
+                        cellSorted2.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 2;
+                        continue;
+                    }
+                    if (board.getCell(row + 1, col).getBulbsAroundWall() == 1) {
+                        cellSorted1.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 1;
+                        continue;
+                    }
+                }
+            } catch (Exception e) {
+            }
+            try{
+                if(board.getCell(row, col + 1).getWall()){
+                    if(board.getCell(row, col + 1).getBulbsAroundWall() == 3) {
+                        cellSorted3.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 3;
+                        continue;
+                    }
+                    if(board.getCell(row, col + 1).getBulbsAroundWall() == 2) {
+                        cellSorted2.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 2;
+                        continue;
+                    }
+                    if(board.getCell(row, col + 1).getBulbsAroundWall() == 1) {
+                        cellSorted1.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 1;
+                        continue;
+                    }
+                }
+            }catch (Exception e){}
+            try{
+                if(board.getCell(row, col - 1).getWall()){
+                    if(board.getCell(row, col -1).getBulbsAroundWall() == 3) {
+                        cellSorted3.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 3;
+                        continue;
+                    }
+                    if(board.getCell(row, col - 1).getBulbsAroundWall() == 2) {
+                        cellSorted2.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 2;
+                        continue;
+                    }
+                    if(board.getCell(row, col - 1).getBulbsAroundWall() == 1) {
+                        cellSorted1.add(board.getCell(row, col));
+                        board.getCell(row, col).h = 1;
+                        continue;
+                    }
+                }
+            }catch (Exception e){}
+            cellSorted0.add(board.getCell(row, col));
+        }
+
+//        for(int i = 0; i < cellSorted3.size(); i++){
+//            System.out.println(cellSorted3.get(i).getRow() + ", " + cellSorted3.get(i).getCol() + ", " + cellSorted3.get(i).h);
+//        }
+
+        cellSorted.addAll(cellSorted3);
+        cellSorted.addAll(cellSorted2);
+        cellSorted.addAll(cellSorted1);
+        cellSorted.addAll(cellSorted0);
+
+
+
+
+        for(int i = 0; i < cellSorted.size(); i++){
+            System.out.println(cellSorted.get(i).getRow() + ", " + cellSorted.get(i).getCol() + ", " + cellSorted.get(i).h);
+        }
+        return cellSorted;
+    }
 
 
 }

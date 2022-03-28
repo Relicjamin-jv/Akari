@@ -17,6 +17,7 @@ public class BoardSolver {
     public Board.Cell[][] board;
     public int sizeOfBoard;
     public Board b;
+    public ArrayList<Board> solution = new ArrayList<>();
 
     BoardSolver(Board.Cell[][] board, int sizeOfBoard, Board b) {
         this.board = board;
@@ -144,12 +145,13 @@ public class BoardSolver {
     }*/
 
     Board backTrackSolve(Board b, ArrayList<Board.Cell> candidates, int i){
-        //b.printBoard();
+
         System.out.println();
         if(b.checkSolved()){
             //return board
             System.out.println("-----SOLVED------");
             b.printBoard();
+            System.out.println();
             solvedn = true;
             return null;
         }
@@ -167,10 +169,13 @@ public class BoardSolver {
         }
 
         //place a lightbulb on the next candidate
-        b.placeBulb(candidates.get(i).getRow(), candidates.get(i).getCol());
+        if(b.placeBulb(candidates.get(i).getRow(), candidates.get(i).getCol())){
+            b.printBoard();
+        }
         backTrackSolve(b, candidates, i+1); //add the next candidate
         b.removeBulb(candidates.get(i).getRow(), candidates.get(i).getCol());
         candidates.remove(i); //we no longer what this candidate to be propagated from this
+        b.printBoard();
         backTrackSolve(b, candidates, i); //add the next candidate
 
 
