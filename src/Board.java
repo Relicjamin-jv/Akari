@@ -51,11 +51,12 @@ public class Board {
 
         //light up the tiles
         if (canPlace) {
+            System.out.println("Placing bulb at: " + i +", " + j);
             board[i][j].setBulb(true);
             lightUpTiles(i, j);
             return true;
         }else{
-//            System.out.println("FAILED");
+            System.out.println("Cant place bulb at " + i + ", " + j);
         }
         return false;
     }
@@ -96,7 +97,7 @@ public class Board {
 
     void removeBulb(int i, int j){
         board[i][j].setBulb(false);
-
+        System.out.println("Removing: " + i +", " + j);
         //remove the l tiles
         delightTiles(i, j);
 

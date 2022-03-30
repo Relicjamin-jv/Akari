@@ -10,6 +10,7 @@
 //import java.io.FileNotFoundException;
 //import java.io.IOException;
 //import java.io.PrintWriter;
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class BoardSolver {
@@ -31,39 +32,44 @@ public class BoardSolver {
     void preprocessor() {
         int numNeighbor = 0;
         int numOfbulbs = 0;
+        int walls = 0;
 
         for (int i = 0; i < sizeOfBoard; i++) {
             for (int j = 0; j < sizeOfBoard; j++) {
                 if (board[i][j].getWall()) {
                     numOfbulbs = board[i][j].getBulbsAroundWall();
                     numNeighbor = 0;
+                    walls = 0;
                     try {
-                        if (board[i - 1][j].getBulb()) {
-
+                        if (board[i - 1][j].getWall()) {
+                            walls++;
                         }
                         numNeighbor++;
                     } catch (Exception e) {
                     }
                     try {
-                        if (board[i + 1][j].getBulb()) {
+                        if (board[i + 1][j].getWall()) {
+                            walls++;
                         }
                         numNeighbor++;
                     } catch (Exception e) {
                     }
                     try {
-                        if (board[i][j + 1].getBulb()) {
+                        if (board[i][j + 1].getWall()) {
+                            walls++;
                         }
                         numNeighbor++;
                     } catch (Exception e) {
                     }
                     try {
-                        if (board[i][j - 1].getBulb()) {
+                        if (board[i][j - 1].getWall()) {
+                            walls++;
                         }
                         numNeighbor++;
                     } catch (Exception e) {
                     }
                     //System.out.println(i + "," + j + "," + numNeighbor + "," + numOfbulbs);
-                    if(numNeighbor == numOfbulbs ){
+                    if((numNeighbor - walls) == numOfbulbs ){
                         placeLightTrivial(i, j);
                     }
                 }
@@ -144,8 +150,8 @@ public class BoardSolver {
 
     }*/
 
-    Board backTrackSolve(Board b, ArrayList<Board.Cell> candidates, int i){
-
+    Board backTrackSolve(Board b, ArrayList<Board.Cell> candidates){
+        b.printBoard();
         System.out.println();
         if(b.checkSolved()){
             //return board
@@ -155,28 +161,34 @@ public class BoardSolver {
             solvedn = true;
             return null;
         }
-        if(solvedn){ //no need to find another solution if there is one
-            return null;
-        }
-        if(i >= candidates.size() || checkBoardWalls(b.board)) {
+        System.out.println(candidates);
+        if(candidates.isEmpty() || checkBoardWalls(b.board)) {
             //b.printBoard();
             if(candidates.isEmpty()){
-                //System.out.println("Ran out of candidates");
+                System.out.println("Ran out of candidates");
             }else{
-                //System.out.println("Cant Satisfy due to constraints");
+                System.out.println("Cant Satisfy due to constraints");
             }
             return null;
         }
 
-        //place a lightbulb on the next candidate
-        if(b.placeBulb(candidates.get(i).getRow(), candidates.get(i).getCol())){
-            b.printBoard();
+        Board.Cell candid = candidates.remove(0);
+
+        ArrayList<Board.Cell> can2 = new ArrayList<>();
+        //seperate candidates with different start
+        for(int i = 0; i < candidates.size(); i++){
+            can2.add(candidates.get(i));
         }
-        backTrackSolve(b, candidates, i+1); //add the next candidate
-        b.removeBulb(candidates.get(i).getRow(), candidates.get(i).getCol());
-        candidates.remove(i); //we no longer what this candidate to be propagated from this
-        b.printBoard();
-        backTrackSolve(b, candidates, i); //add the next candidate
+
+        boolean placed = b.placeBulb(candid.getRow(), candid.getCol());
+        backTrackSolve(b, candidates); //if fail remove the lightbulb
+        if(placed) {
+            b.removeBulb(candid.getRow(), candid.getCol());
+            backTrackSolve(b, can2);
+        }
+
+
+
 
 
 
@@ -248,7 +260,7 @@ public class BoardSolver {
             if(numBulb == walls.get(iter).getBulbsAroundWall() || space - numLit >= walls.get(iter).getBulbsAroundWall()){
                 //System.out.println(row + ", " + col + ", " + numLit + ", " + numBulb + ", " + space);
             }else{
-                //System.out.println("true " + row + ", " + col + ", " + numLit + ", " + numBulb + ", " + space);
+                System.out.println("true " + "r:" + row + ", c:" + col + ", nl:" + numLit + ", nb:" + numBulb + ", sa:" + space);
                 return true;
             }
         }
