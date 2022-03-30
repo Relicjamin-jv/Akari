@@ -6,7 +6,11 @@ So lets start with main.java
     3. To remove the huer. commit hot the line that sorts the candidates
     4. Making a new board is painful, I'd recommend that if you were going to fiddle with this poorly written code, I'd just go to the size board you are looking for and put in new walls
         with board.placeWall(row, col, num); i.e -1 for num will not put a constraint on that wall for how many lightbulbs are needed.
-        ex.
+    6. The solution to the code will print out to the console, following the solution from the bottom to the top will show how
+        the algorithm placed light bulbs
+
+
+        ex. for removal of different search tech.
         Board board = new Board(7); //7x7 board
                 BoardSolver solver = new BoardSolver(board.board, 7, board);
 
