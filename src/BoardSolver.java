@@ -14,11 +14,12 @@ import javax.swing.*;
 import java.util.ArrayList;
 
 public class BoardSolver {
-    static public boolean solvedn = false;
+    static public boolean solvedPuzzle = false;
     public Board.Cell[][] board;
     public int sizeOfBoard;
     public Board b;
     public ArrayList<Board> solution = new ArrayList<>();
+    public int numberOfTimesRan = 0;
 
     BoardSolver(Board.Cell[][] board, int sizeOfBoard, Board b) {
         this.board = board;
@@ -151,17 +152,16 @@ public class BoardSolver {
     }*/
 
     Board backTrackSolve(Board b, ArrayList<Board.Cell> candidates){
-        b.printBoard();
-        System.out.println();
-        if(b.checkSolved()){
+        numberOfTimesRan++;
+        //b.printBoard();
+        if(b.checkSolved() || solvedPuzzle){
             //return board
-            System.out.println("-----SOLVED------");
+            System.out.println("-----SOLVED------ with " + numberOfTimesRan + " number of runs" );
             b.printBoard();
             System.out.println();
-            solvedn = true;
+            solvedPuzzle = true;
             return null;
         }
-        System.out.println(candidates);
         if(candidates.isEmpty() || checkBoardWalls(b.board)) {
             //b.printBoard();
             if(candidates.isEmpty()){
@@ -220,7 +220,7 @@ public class BoardSolver {
             int col = curr.getCol();
 
             try{
-                if(b[row-1][col].getLit()){
+                if(b[row-1][col].getLit() || b[row-1][col].getWall()){
                     numLit++;
                 }
                 if(b[row-1][col].getBulb()){
@@ -229,7 +229,7 @@ public class BoardSolver {
                 space++;
             }catch (Exception e){}
             try{
-                if(b[row+1][col].getLit()){
+                if(b[row+1][col].getLit() || b[row+1][col].getWall()){
                     numLit++;
                 }
                 if(b[row+1][col].getBulb()){
@@ -238,7 +238,7 @@ public class BoardSolver {
                 space++;
             }catch (Exception e){}
             try{
-                if(b[row][col-1].getLit()){
+                if(b[row][col-1].getLit() || b[row][col-1].getWall()){
                     numLit++;
                 }
                 if(b[row][col-1].getBulb()){
@@ -247,7 +247,7 @@ public class BoardSolver {
                 space++;
             }catch (Exception e){}
             try{
-                if(b[row][col+1].getLit()){
+                if(b[row][col+1].getLit() || b[row][col+1].getWall()){
                     numLit++;
                 }
                 if(b[row][col+1].getBulb()){
@@ -260,7 +260,7 @@ public class BoardSolver {
             if(numBulb == walls.get(iter).getBulbsAroundWall() || space - numLit >= walls.get(iter).getBulbsAroundWall()){
                 //System.out.println(row + ", " + col + ", " + numLit + ", " + numBulb + ", " + space);
             }else{
-                System.out.println("true " + "r:" + row + ", c:" + col + ", nl:" + numLit + ", nb:" + numBulb + ", sa:" + space);
+                //System.out.println("true " + "r:" + row + ", c:" + col + ", nl:" + numLit + ", nb:" + numBulb + ", sa:" + space);
                 return true;
             }
         }
