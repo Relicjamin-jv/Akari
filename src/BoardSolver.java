@@ -11,6 +11,15 @@
 //import java.io.IOException;
 //import java.io.PrintWriter;
 import javax.swing.*;
+
+/**
+ *
+ * All solving algorithms are based of off https://www.cs.ru.nl/bachelors-theses/2021/Bram_Pulles___1015194___Analysis_of_Akari.pdf
+ * "Analysis of Akari" by Bram Pulles
+ *
+ * */
+
+
 import java.util.ArrayList;
 
 public class BoardSolver {
